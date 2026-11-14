@@ -1,8 +1,10 @@
-# Contribuire
+# Contributing
 
-Il progetto separa motore Python, adattatori locali, ricette e skill. Prima di aggiungere un backend leggere [ARCHITECTURE.md](docs/ARCHITECTURE.md); conservare output grezzi, provenienza e timestamp, e dichiarare i limiti del backend.
+The project separates its Python engine, local adapters, recipes and skills. Before adding a backend, read [ARCHITECTURE.md](docs/ARCHITECTURE.md). Preserve raw outputs, provenance and timestamps, and state the backend's limits.
 
-## Verifica locale
+All documentation, skill descriptions, help text and report interface labels should be in English. Meeting transcripts and multilingual test fixtures retain their source language.
+
+## Local checks
 
 ```sh
 python3 -m venv .venv
@@ -11,10 +13,10 @@ python3 -m venv .venv
 .venv/bin/python -m compileall -q src scripts
 ```
 
-Questi controlli non richiedono modelli né registrazioni. L'inferenza attuale richiede un Mac Apple Silicon e il runtime separato documentato nel README.
+These checks do not require models or recordings. Inference currently requires Apple Silicon macOS and the separate runtime described in the README. Public-corpus inference is an explicit local evaluation, not a default GitHub Actions job.
 
-Usare fixture sintetiche per i test. Non includere audio di riunioni, trascrizioni reali, credenziali, database, profili vocali o glossari personali. Un report HTML di confronto contiene testo e percorsi locali: è un dato privato, anche quando lo strumento che lo produce è pubblico.
+Use synthetic fixtures for unit tests. Do not include meeting recordings, real transcripts, credentials, databases, voice profiles or personal glossaries. An HTML comparison contains text and local paths: it is private data even when the tool producing it is public.
 
-Per modifiche alla qualità, descrivere corpus, versioni, parametri, normalizzazione, riferimento umano, hardware e modalità di misura. Valutare sullo stesso audio e riportare anche regressioni. Un numero corretto di speaker non basta a misurare la diarizzazione; il consenso tra ASR non è una verifica del testo.
+Quality changes must document corpus, versions, parameters, normalization, reference provenance, hardware and timing boundaries. Evaluate the same audio and report regressions. A correct speaker count does not establish correct diarization; agreement between ASR engines does not verify their text.
 
-Le pull request devono spiegare problema, comportamento risultante e verifiche. Il codice originale è MIT; dipendenze e modelli mantengono le rispettive licenze. Nuovi adattatori devono indicarne fonti e condizioni.
+Pull requests should explain the problem, resulting behavior and validation. Original code is MIT; dependencies and models retain their own licenses. New adapters must document those sources and terms.

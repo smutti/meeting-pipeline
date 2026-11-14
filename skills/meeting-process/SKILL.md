@@ -1,6 +1,6 @@
 ---
 name: meeting-process
-description: "Elabora registrazioni di riunioni con la pipeline locale meet: trascrizione, diarizzazione, glossario, riconoscimento vocale e rapporto dei dubbi. Usa per nuovi audio, elaborazioni in coda o ripresa di un job."
+description: "Process meeting recordings with the local meet pipeline: transcription, diarization, glossary, voice matching and review reports. Use for new audio, queued processing or resuming a job."
 ---
 
 # Meeting Process

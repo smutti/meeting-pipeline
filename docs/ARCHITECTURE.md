@@ -1,55 +1,58 @@
-# Architettura e contratti
+# Architecture and contracts
 
-Un repository, un package Python, tre skill. Il motore deterministico gestisce stato, file e modello selezionato; Codex aiuta ad avviare, rivedere e insegnare il lessico. Non è necessario mantenere una chat aperta per elaborare una registrazione.
+One repository, one Python package, three skills. The engine manages state, files and model selection; Codex helps start jobs, review issues and maintain terminology. Processing does not require an open chat.
 
 ```mermaid
 flowchart TD
-  A[File sul Mac] --> B[Inbox stabile e hash]
-  B --> C[Coda SQLite e checkpoint]
-  C --> D[Parakeet: parole e tempi]
-  C --> E[Nemotron o Community: speaker]
-  C --> F[Qwen: lettura indipendente e glossario]
-  D --> G[Controlli e disaccordi]
+  A[File on the Mac] --> B[Stable inbox and content hash]
+  B --> C[SQLite queue and checkpoints]
+  C --> D[Parakeet: words and timestamps]
+  C --> E[Nemotron or Community: speaker turns]
+  C --> F[Qwen: independent reading and glossary]
+  D --> G[Quality checks and disagreements]
   E --> G
   F --> G
-  G --> H[Whisper e diarizzazione alternativa se necessari]
-  H --> I[Profili vocali e candidati sconosciuti]
-  I --> J[Rapporto, revisione e allineamento correzioni]
-  J --> K[Markdown per Obsidian]
-  L[Skill Codex] --> C
+  G --> H[Targeted Whisper and alternative diarization]
+  H --> I[Voice profiles and unknown candidates]
+  I --> J[Report, review and correction alignment]
+  J --> K[Markdown for Obsidian]
+  L[Codex skills] --> C
   L --> J
-  L --> M[Glossari e campioni confermati]
+  L --> M[Glossaries and confirmed voice samples]
   M --> F
   M --> I
 ```
 
-## Estensione
+## Extension points
 
-- **ASR**: adattatore che restituisce `text`, `words` con `start/end/text/confidence` e/o `segments`, nome motore e percorso dell'output grezzo. Un timestamp di chunk non viene trattato come timestamp di parola.
-- **Diarizzazione**: `segments` con `speaker/start/end`, conteggio e numero eventualmente imposto. ID di riunioni/modelli diversi non sono identità confrontabili direttamente.
-- **Embedding**: vettore normalizzato e `model_id` derivato dai file del modello; confronto solo fra rappresentazioni compatibili. I campioni di query sono estratti da intervalli privi di sovrapposizione secondo la diarizzazione corrente.
-- **Sorgente**: scrive il file finito e, facoltativamente, metadati JSON nell'inbox. API/webhook di un registratore, iCloud o esportazione manuale possono usare lo stesso ingresso senza cambiare il motore.
-- **Destinazione**: il primo adattatore esporta Markdown senza sovrascrivere note differenti. Un futuro writer Obsidian può aggiungere collegamenti, cartelle e riepiloghi mantenendo la provenienza.
-- **Ricetta**: file JSON con motori, ambito della seconda lettura, budget dei tentativi e soglie. L'implementazione valida le combinazioni supportate: non basta inserire un nome di modello inesistente.
+- **ASR:** returns `text`, `words` with `start/end/text/confidence` and/or `segments`, engine name and raw output path. Chunk timestamps are not word timestamps.
+- **Diarization:** returns `segments` with `speaker/start/end`, speaker count and any count constraint. IDs from different meetings or models are not directly comparable identities.
+- **Embedding:** returns a normalized vector and a `model_id` derived from model files. Compare only compatible representations. Query clips exclude overlaps according to the current diarization.
+- **Source:** writes a completed audio file and optional JSON metadata to the inbox. Recorder APIs/webhooks, iCloud or manual export can share this input contract.
+- **Destination:** the initial adapter exports Markdown without overwriting different notes. A future Obsidian writer can add folders, links and summaries while preserving provenance.
+- **Recipe:** JSON defines engines, second-pass scope, attempt budget and thresholds. The implementation validates supported combinations; an arbitrary model name is not enough to add a backend.
+- **Evaluation:** reference-based metrics are separate from processing heuristics. A public-corpus runner uses the same ASR adapters, keeps raw outputs and scores identical audio/reference pairs. It does not enable automatic text replacement.
 
-## Stato e riproducibilità
+## State and reproducibility
 
-L'identità di un job comprende hash del contenuto, parametri, ricetta, snapshot della conoscenza, runtime e versione del motore. Gli step registrano running/complete e scrivono JSON atomicamente. Gli input originali sono copiati e verificati; gli output derivati sono locali. Aggiornare il codice richiede aggiornare la versione quando cambia il comportamento dei risultati.
+Job identity includes the audio content hash, parameters, recipe, knowledge snapshot, runtime and engine version. Steps record running/complete state and write JSON atomically. Original inputs are copied and verified; derived outputs remain local. Bump the engine version when code changes affect generated results.
 
-Gli stati principali sono queued → running → needs_review / ready, oppure failed. La conferma di tutti gli elementi porta a reviewed. Una ripartenza esegue gli step mancanti; il worker è seriale per evitare competizione tra modelli sulla memoria del Mac.
+Main states are queued → running → needs_review / ready, or failed. Resolving all issues leads to reviewed. Restarting executes missing steps. The worker is serial to avoid model contention for Mac memory.
 
-## Qualità e limiti espliciti
+The evaluation runner acquires the same worker lock, fingerprints model files and inference code, and caches candidates by audio, runtime, language and engine. Scoring can be repeated against saved candidates. Evaluation data and reference text stay outside the repository.
 
-La prima versione seleziona Parakeet come testo di base e conserva Qwen/Whisper come evidenza alternativa. Non è ancora attivo un arbitro che sostituisce automaticamente le frasi discordanti. Il costo evitato è una correzione automatica apparentemente fluida che peggiora l'audio originale.
+## Quality and current limits
 
-Le segnalazioni includono punteggi bassi, ripetizioni, intervalli con parlato ma senza testo, timestamp anomali, alias del glossario, speaker brevi e disaccordi fra testi. Il parlato è attualmente stimato dal diarizzatore: un VAD indipendente è un'estensione prevista. Uguaglianza del conteggio speaker non elimina una segnalazione sulle attribuzioni.
+The current recipe selects Parakeet as its base text and retains Qwen/Whisper as alternative evidence. It does not automatically replace disputed sentences.
 
-La diarizzazione alternativa è globale, non una sostituzione cieca di microsegmenti. I candidati sono conservati ma la scelta/riconciliazione automatica dei cluster è ancora da sviluppare. La revisione attuale permette nomi per cluster, non l'editing grafico delle frontiere speaker.
+Checks cover low scores, repetition, speech intervals without text, abnormal timestamps, glossary aliases, short speaker clusters and disagreements. Speech activity is currently estimated by the diarizer; an independent VAD is planned. Agreement on speaker count does not resolve assignment concerns.
 
-La seconda lettura può concordare su un errore e la confidenza può essere elevata su una parola sbagliata. Il disaccordo non è WER. L'allineamento del testo non ne certifica la correttezza. L'accettazione automatica delle identità richiede una politica valutata: la presenza di un file di evidenza è tracciabilità, non una certificazione eseguita dal software.
+Alternative diarization runs globally. Candidates are preserved, but automatic cluster selection/reconciliation is not implemented. Review supports cluster names, not graphical editing of speaker boundaries.
 
-## Confine GitHub / dati locali
+Two models can agree on an error, and an incorrect word can receive high confidence. Disagreement is not WER. Forced alignment does not certify text. Automatic identity acceptance requires an evaluated policy: recording an evidence file provides traceability, not software certification of that evidence.
 
-Versionare codice, skill, ricette generiche, documentazione e test senza contenuti reali. Audio, trascrizioni, nomi, embedding, glossari personali, SQLite, token e percorsi personali restano nella home dati esterna. I job possono contenere uno snapshot completo della conoscenza: devono restare locali anche quando il repository è privato.
+## Public code and local data
 
-Fonti dei runtime: [FluidAudio](https://github.com/FluidInference/FluidAudio), [Nemotron-3](https://huggingface.co/nvidia/Nemotron-3-Diarization), [Qwen3-ASR](https://huggingface.co/Qwen/Qwen3-ASR-1.7B), [Community-1](https://huggingface.co/pyannote/speaker-diarization-community-1). Le licenze dei singoli modelli restano quelle dei rispettivi fornitori.
+Version code, skills, generic recipes, documentation and tests without private content. Recordings, transcripts, names, embeddings, personal glossaries, SQLite, tokens and personal paths stay in the external data home. Jobs can include a complete knowledge snapshot and must remain local even if a checkout is private.
+
+Runtime sources: [FluidAudio](https://github.com/FluidInference/FluidAudio), [Nemotron-3](https://huggingface.co/nvidia/Nemotron-3-Diarization), [Qwen3-ASR](https://huggingface.co/Qwen/Qwen3-ASR-1.7B), [Community-1](https://huggingface.co/pyannote/speaker-diarization-community-1). Each model retains its provider's license.

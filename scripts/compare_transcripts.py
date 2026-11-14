@@ -123,25 +123,25 @@ def summarize(manifest, references):
 
 
 PAGE = r"""<!doctype html>
-<html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Confronto locale delle trascrizioni</title>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Local transcript comparison</title>
 <style>
 :root{color-scheme:light}body{font:16px/1.55 system-ui;margin:0;background:#f4f6f8;color:#202b36}main{max-width:1400px;margin:auto;padding:28px}h1{font-size:30px;line-height:1.2}h2{margin-top:30px}.note{background:#e4eef6;padding:16px;border-radius:10px}.muted{color:#526171;font-size:14px}button,select,input,textarea{font:inherit;padding:8px;border:1px solid #b4c0cb;border-radius:6px}button{cursor:pointer;background:#eef4f8}audio{width:100%;max-width:600px}table{border-collapse:collapse;width:100%;font-size:14px}td,th{padding:9px;text-align:left;border-bottom:1px solid #d7dfe7}th{background:#e7edf3}.scroll{overflow:auto}.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}.card{background:white;padding:18px;border-radius:10px;margin:12px 0;min-width:0}.transcript{max-height:600px;overflow:auto;white-space:pre-wrap}.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}textarea{box-sizing:border-box;width:100%;min-height:130px}summary{cursor:pointer;font-weight:600}.segment{margin:5px 0}.time{color:#547087;font-size:12px}pre{white-space:pre-wrap}@media(max-width:850px){.cols{grid-template-columns:1fr}main{padding:15px}}
 </style><main>
-<h1>Prima versione, modelli e nuova pipeline</h1>
-<p class="note">Rapporto privato e offline. Le differenze tra testi non misurano la correttezza. Le note archiviate includono interventi umani; i risultati automatici rimangono candidati. Per valutare la fedeltà, ascoltare prima i campioni e scrivere un riferimento senza guardare le proposte.</p>
+<h1>Previous workflow, models and new pipeline</h1>
+<p class="note">Private offline report. Text differences do not measure correctness. Archived notes include human edits; automatic outputs remain candidates. To assess accuracy, listen first and write a reference before opening model suggestions.</p>
 <div id="overview"></div>
-<h2>Confronto sullo stesso intervallo</h2>
-<div class="controls"><label>Audio <select id="recording"></select></label><label>Da (s) <input id="start" type="number" value="0" min="0" step="1"></label><label>A (s) <input id="end" type="number" value="90" min="0" step="1"></label><button id="show">Confronta</button><button id="listen">Ascolta intervallo</button></div>
+<h2>Compare the same interval</h2>
+<div class="controls"><label>Audio <select id="recording"></select></label><label>From (s) <input id="start" type="number" value="0" min="0" step="1"></label><label>To (s) <input id="end" type="number" value="90" min="0" step="1"></label><button id="show">Compare</button><button id="listen">Play interval</button></div>
 <audio id="fullaudio" controls preload="none"></audio>
-<p class="muted">I timestamp hanno granularità diversa. I segmenti che attraversano un confine vengono mostrati interi, senza inventare tempi parola per parola. Questo estratto visivo non entra nel calcolo WER.</p>
+<p class="muted">Timestamp granularity varies. Segments crossing a boundary are displayed in full without inventing word timings. This visual excerpt is excluded from WER scoring.</p>
 <div class="cols"><div class="card"><select id="left"></select><p id="leftnote" class="muted"></p><div id="lefttext" class="transcript"></div></div><div class="card"><select id="right"></select><p id="rightnote" class="muted"></p><div id="righttext" class="transcript"></div></div></div>
-<h2>Testo completo e approfondimenti</h2><div id="fulltexts"></div>
-<h2>Campioni per il riferimento umano</h2>
-<p>Tre finestre di 90 secondi per registrazione, scelte per posizione prima di leggere gli output. Le proposte sono chiuse inizialmente per ridurre l'influenza sull'ascolto. I campioni difficili aggiuntivi non vanno mescolati con questi per stimare una qualità media. Le modifiche restano in memoria: esportare il JSON prima di chiudere.</p>
-<div class="controls"><button id="download">Esporta riferimenti JSON</button><label>Ricarica riferimenti <input id="upload" type="file" accept=".json,application/json"></label></div>
+<h2>Full transcripts and targeted readings</h2><div id="fulltexts"></div>
+<h2>Human reference samples</h2>
+<p>Review the sampling protocol in the manifest. Candidates are initially collapsed to reduce listening bias. Keep additional difficult cases separate when estimating average quality. Edits remain in memory: export JSON before closing this page.</p>
+<div class="controls"><button id="download">Export reference JSON</button><label>Reload references <input id="upload" type="file" accept=".json,application/json"></label></div>
 <div id="samples"></div>
-<h2>Misure di accuratezza</h2><pre id="scores"></pre>
+<h2>Accuracy measurements</h2><pre id="scores"></pre>
 </main><script id="dataset" type="application/json">__DATA__</script><script>
 'use strict';
 const D=JSON.parse(document.getElementById('dataset').textContent), M=D.manifest;
@@ -149,22 +149,22 @@ const $=id=>document.getElementById(id);
 function el(tag,text,cls){const x=document.createElement(tag);if(text!==undefined)x.textContent=text;if(cls)x.className=cls;return x;}
 function option(s,v,t){const o=el('option',t);o.value=v;s.append(o);}
 function table(headers,rows){const w=el('div',undefined,'scroll'),t=el('table'),head=el('tr');headers.forEach(h=>head.append(el('th',h)));t.append(head);rows.forEach(r=>{const tr=el('tr');r.forEach(c=>tr.append(el('td',String(c))));t.append(tr);});w.append(t);return w;}
-for(const r of D.summary.recordings){$('overview').append(el('h2',r.id+' · '+(r.duration/60).toFixed(2)+' minuti'));$('overview').append(table(['Variante','Parole normalizzate','Tempo (s)','Differenza testuale vs archivio*'],r.variants.map(v=>[v.label,v.words,v.wall_seconds===null?'—':v.wall_seconds.toFixed(2),(100*v.difference_from_archive).toFixed(1)+'%'])));if(r.diarizers.length)$('overview').append(table(['Diarizzazione','Voci','Nota'],r.diarizers.map(d=>[d.label,d.speakers,d.notes||''])));}
-$('overview').append(el('p','* 1 − similarità SequenceMatcher; non è WER, percentuale di errori o graduatoria di qualità. I tempi delle singole inferenze e quelli del workflow hanno confini di misura diversi.','muted'));
+for(const r of D.summary.recordings){$('overview').append(el('h2',r.id+' · '+(r.duration/60).toFixed(2)+' minutes'));$('overview').append(table(['Variant','Normalized words','Time (s)','Text difference vs archive*'],r.variants.map(v=>[v.label,v.words,v.wall_seconds===null?'—':v.wall_seconds.toFixed(2),(100*v.difference_from_archive).toFixed(1)+'%'])));if(r.diarizers.length)$('overview').append(table(['Diarization','Speakers','Note'],r.diarizers.map(d=>[d.label,d.speakers,d.notes||''])));}
+$('overview').append(el('p','* 1 − SequenceMatcher similarity; not WER, an error percentage or a quality ranking. Individual inference and workflow timings have different measurement boundaries.','muted'));
 for(const r of M.recordings)option($('recording'),r.id,r.label||r.id);
 function rec(){return M.recordings.find(r=>r.id===$('recording').value);}
-function show(){const r=rec(),a=Number($('start').value),b=Number($('end').value);for(const side of ['left','right']){const v=r.variants.find(v=>v.id===$(side).value),out=$(side+'text');out.replaceChildren();$(side+'note').textContent=v.notes||'';for(const s of v.segments||[]){if(s.end>a&&s.start<b){const p=el('div',undefined,'segment');p.append(el('span',s.start.toFixed(2)+'–'+s.end.toFixed(2)+' '+(s.speaker||'')+'  ','time'),document.createTextNode(s.text));out.append(p);}}if(!out.childNodes.length)out.append(el('p','Nessun segmento temporizzato in questo intervallo. Il testo completo è disponibile sotto.'));}}
+function show(){const r=rec(),a=Number($('start').value),b=Number($('end').value);for(const side of ['left','right']){const v=r.variants.find(v=>v.id===$(side).value),out=$(side+'text');out.replaceChildren();$(side+'note').textContent=v.notes||'';for(const s of v.segments||[]){if(s.end>a&&s.start<b){const p=el('div',undefined,'segment');p.append(el('span',s.start.toFixed(2)+'–'+s.end.toFixed(2)+' '+(s.speaker||'')+'  ','time'),document.createTextNode(s.text));out.append(p);}}if(!out.childNodes.length)out.append(el('p','No timed segments in this interval. Full text is available below.'));}}
 function choose(){const r=rec();$('fullaudio').src=r.audio;for(const side of ['left','right']){$(side).replaceChildren();for(const v of r.variants)option($(side),v.id,v.label);} $('right').selectedIndex=Math.min(4,r.variants.length-1);$('fulltexts').replaceChildren();for(const v of r.variants){const det=el('details',undefined,'card');det.append(el('summary',v.label),el('p',v.notes||'','muted'),el('div',v.text,'transcript'));$('fulltexts').append(det);}for(const d of r.diagnostics||[]){const det=el('details',undefined,'card');det.append(el('summary',d.label+' · '+d.start.toFixed(2)+'–'+d.end.toFixed(2)+' s'),el('p',d.notes||'','muted'),el('div',d.text,'transcript'));$('fulltexts').append(det);}show();}
 $('recording').onchange=choose;$('show').onclick=show;$('left').onchange=show;$('right').onchange=show;
 $('listen').onclick=()=>{const a=Number($('start').value),b=Number($('end').value);if(a<0||b<=a)return;$('fullaudio').currentTime=a;$('fullaudio').play();};
 $('fullaudio').ontimeupdate=()=>{if($('fullaudio').currentTime>=Number($('end').value))$('fullaudio').pause();};
 const editors=new Map();
-for(const c of M.clips||[]){const card=el('section',undefined,'card'),audio=el('audio');audio.controls=true;audio.preload='none';audio.src=c.audio;const ta=el('textarea'),check=el('input');check.type='checkbox';ta.setAttribute('aria-label','Riferimento '+c.id);const label=el('label');label.append(check,document.createTextNode(' Ho ascoltato e verificato tutto il testo del campione'));card.append(el('h3',c.id+' · '+c.start.toFixed(2)+'–'+(c.start+c.duration).toFixed(2)+' s'),audio,ta,label);const det=el('details');det.append(el('summary','Mostra le trascrizioni candidate'));for(const v of c.candidates){det.append(el('h4',v.variant+' · '+v.scope),el('p',v.text));}card.append(det);$('samples').append(card);editors.set(c.id,{ta,check});}
+for(const c of M.clips||[]){const card=el('section',undefined,'card'),audio=el('audio');audio.controls=true;audio.preload='none';audio.src=c.audio;const ta=el('textarea'),check=el('input');check.type='checkbox';ta.setAttribute('aria-label','Reference '+c.id);const label=el('label');label.append(check,document.createTextNode(' I listened to and verified the complete sample text'));card.append(el('h3',c.id+' · '+c.start.toFixed(2)+'–'+(c.start+c.duration).toFixed(2)+' s'),audio,ta,label);const det=el('details');det.append(el('summary','Show candidate transcripts'));for(const v of c.candidates){det.append(el('h4',v.variant+' · '+v.scope),el('p',v.text));}card.append(det);$('samples').append(card);editors.set(c.id,{ta,check});}
 function loadRefs(refs){for(const r of refs){const e=editors.get(r.clip_id);if(e){e.ta.value=r.text||'';e.check.checked=r.human_reviewed===true;}}}
 loadRefs(D.references);
 $('download').onclick=()=>{const refs=[...editors].map(([id,e])=>({clip_id:id,text:e.ta.value,human_reviewed:e.check.checked}));const u=URL.createObjectURL(new Blob([JSON.stringify(refs,null,2)],{type:'application/json'}));const a=el('a');a.href=u;a.download='references.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);};
-$('upload').onchange=async()=>{try{const refs=JSON.parse(await $('upload').files[0].text());if(!Array.isArray(refs))throw Error('Attesa una lista JSON');loadRefs(refs);}catch(e){alert(e.message);}};
-$('scores').textContent=D.summary.quality.totals.length?JSON.stringify(D.summary.quality,null,2):'WER non calcolato: mancano riferimenti umani verificati. DER e riconoscimento delle identità non sono misurati da questo rapporto.';
+$('upload').onchange=async()=>{try{const refs=JSON.parse(await $('upload').files[0].text());if(!Array.isArray(refs))throw Error('Expected a JSON array');loadRefs(refs);}catch(e){alert(e.message);}};
+$('scores').textContent=D.summary.quality.totals.length?JSON.stringify(D.summary.quality,null,2):'WER not calculated: verified human references are missing. This report does not measure DER or identity recognition.';
 choose();
 </script></html>"""
 
@@ -194,12 +194,12 @@ def main():
         json.dumps(summary, ensure_ascii=False, indent=2)
     )
     (args.output / "comparison.html").write_text(render(manifest, summary, references))
-    lines = ["# Confronto delle trascrizioni", "", summary["difference_definition"], ""]
+    lines = ["# Transcript comparison", "", summary["difference_definition"], ""]
     for rec in summary["recordings"]:
         lines += [
             "## " + rec["id"],
             "",
-            "| Variante | Parole | Secondi | Differenza vs archivio (non WER) |",
+            "| Variant | Words | Seconds | Difference vs archive (not WER) |",
             "|---|---:|---:|---:|",
         ]
         for v in rec["variants"]:
@@ -208,7 +208,7 @@ def main():
             )
         lines.append("")
     lines += [
-        "## WER su campioni verificati",
+        "## WER on verified samples",
         "",
         json.dumps(summary["quality"], ensure_ascii=False, indent=2),
     ]

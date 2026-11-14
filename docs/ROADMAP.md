@@ -1,31 +1,33 @@
-# Stato e sviluppo
+# Status and roadmap
 
-## v0.1 — base operativa
+## Operational foundation
 
-- Package e CLI con core senza dipendenze ML, runtime pesanti isolati.
-- Tre skill installabili e workflow quality/fast.
-- Inbox stabile, deduplicazione, checkpoint, retry, lock e servizio macOS.
-- Parakeet/Qwen, Whisper selettivo, Nemotron/Community, rapporto e Markdown.
-- Glossari per progetto/lingua con hotword Qwen e alias segnalati.
-- Enrollment vocale da audio reale, embedding versionati, suggerimenti/unknown e politica di accettazione esplicita.
-- Revisione di nomi e testo; correzioni riallineate quando l'allineatore è configurato.
-- GitHub Actions sui test del core; audio e inference esclusi dalla CI.
+- Python package and CLI with an ML-free core and isolated model runtimes.
+- Three installable skills and `quality`/`fast` workflows.
+- Stable inbox detection, deduplication, checkpoints, retries, locks and macOS service.
+- Parakeet/Qwen, selective Whisper, Nemotron/Community, review reports and Markdown.
+- Project/language glossaries with Qwen hotwords and flagged aliases.
+- Voice enrollment from real audio, versioned embeddings, suggestions/unknown and an explicit acceptance policy.
+- Name/text review with correction alignment when an aligner is configured.
+- Software tests in GitHub Actions; recordings and model inference excluded.
+- Local transcript comparison and automatic reference-based ASR evaluation, including a pinned public Italian/English test subset.
 
-## Prossimo incremento — qualità misurata
+## Next increment: measured meeting quality
 
-1. Etichettare un piccolo insieme italiano/inglese con passaggi segnalati e campioni non segnalati. Separare taratura e verifica.
-2. Confermare nomi e campioni puliti di interlocutori abituali, da più riunioni. Includere sconosciuti e condizioni acustiche diverse nella verifica.
-3. Misurare errori di testo, omissioni, falsi nomi, errori lasciati passare e tempo umano. I punteggi decoder non bastano.
-4. Accorpare avvisi vicini e migliorare il filtro: il primo insieme di soglie è conservativo e può produrre molti avvisi.
-5. Allineare entrambe le letture per localizzare i disaccordi a livello di parola; introdurre sostituzioni automatiche soltanto su classi validate.
-6. Aggiungere confronto/riconciliazione dei cluster speaker e revisione delle frontiere, oltre al conteggio e alla conferma dei nomi.
+1. Label a small Italian/English meeting set with both flagged and unflagged passages. Separate calibration and evaluation. Public read-speech scores are a preliminary check, not a substitute.
+2. Confirm clean samples of recurring speakers from multiple recordings. Include unknown voices and different acoustic conditions in evaluation.
+3. Measure text errors, omissions, false names, unflagged errors and human review time. Decoder scores are insufficient.
+4. Merge nearby issues and improve filtering: initial thresholds are conservative and produce many alerts.
+5. Align both readings to localize disagreements to words; enable automatic replacement only for validated cases.
+6. Add speaker-cluster comparison/reconciliation and boundary review beyond count checks and name confirmation.
+7. Evaluate diarization against annotated turns using DER with explicit collar and overlap handling.
 
-## Integrazioni successive
+## Later integrations
 
-- Verificare l'export realmente disponibile da Comu Starter sul Mac; aggiungere un adattatore sorgente quando il trasferimento è riproducibile.
-- Integrare un VAD indipendente per controllare omissioni e silenzi.
-- UI locale interattiva per correggere senza comandi e notificare solo quando serve.
-- Esportazione Obsidian con destinazione per progetto, riassunti separati dalla trascrizione e collegamenti alle note esistenti.
-- Pacchetto unico del runtime Mac e verifica di installazione pulita; gestione degli aggiornamenti dei modelli con benchmark di regressione.
+- Verify the export actually available from Comu Starter on the Mac; add a source adapter once transfer is reproducible.
+- Add independent VAD to check omissions and silence.
+- Provide a local editing UI and notify only when action is needed.
+- Export to project-specific Obsidian destinations, with summaries separate from transcripts and links to existing notes.
+- Package the Mac runtime, validate clean installation and gate model updates with regression benchmarks.
 
-Il servizio automatico può essere attivo prima di questi incrementi: produrrà bozze e richieste di revisione. Il riconoscimento dei nomi ad alta affidabilità dipende dalla banca vocale e da una valutazione reale, non dalla sola installazione del software.
+The background service can run before these increments: it produces drafts and review requests. Reliable recognition of names depends on a voice gallery and real evaluation, not installation alone.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Meeting Review"
-  short_description: "Rivedi i passaggi incerti delle riunioni"
-  default_prompt: "Usa $meeting-review per rivedere i dubbi di questa riunione."
+  short_description: "Review uncertain meeting passages"
+  default_prompt: "Use $meeting-review to review this meeting’s open issues."

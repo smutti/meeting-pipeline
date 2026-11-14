@@ -1,20 +1,21 @@
-# Codice, runtime e modelli
+# Code, runtimes and models
 
-La licenza MIT del repository riguarda il codice e la documentazione originali qui distribuiti. Non cambia la licenza delle dipendenze, dei pesi, delle conversioni o dei dati dell'utente. Il repository non distribuisce pesi né registrazioni; il setup scarica il runtime separatamente.
+The repository's MIT license covers the original code and documentation distributed here. It does not change licenses for dependencies, weights, conversions or user data. Model weights and recordings are not distributed in the repository; setup downloads runtimes separately.
 
-Fonti da consultare per le revisioni effettivamente usate:
+Consult the sources for the exact revisions being used:
 
-| Componente | Fonte e licenza pubblicata |
+| Component | Source and published license |
 |---|---|
-| FluidAudio, runtime Core ML | [Repository e licenza Apache 2.0](https://github.com/FluidInference/FluidAudio) |
-| NeMo-Speech.cpp | [Repository e licenza](https://github.com/NVIDIA/NeMo-Speech.cpp) |
-| mlx-audio | [Repository e licenza](https://github.com/Blaizzy/mlx-audio) |
-| mlx-whisper | [Repository e licenza](https://github.com/ml-explore/mlx-examples/tree/main/whisper) |
-| Qwen3-ASR | [Modello originale, Apache 2.0](https://huggingface.co/Qwen/Qwen3-ASR-1.7B), [conversione MLX](https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-bf16) |
-| Qwen3 ForcedAligner | [Modello originale](https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B), [conversione MLX](https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit) |
-| Whisper large-v3 | [Modello originale](https://huggingface.co/openai/whisper-large-v3), [conversione MLX](https://huggingface.co/mlx-community/whisper-large-v3-mlx) |
-| Parakeet Ultra Core ML | [Pesi e attribuzioni](https://huggingface.co/FluidInference/parakeet-ultra-coreml) |
-| Nemotron-3 Diarization | [Model card e OpenMDW 1.1](https://huggingface.co/nvidia/Nemotron-3-Diarization) |
-| Community-1 | [Pipeline originale, CC BY 4.0](https://huggingface.co/pyannote/speaker-diarization-community-1), [conversione Core ML e componenti](https://huggingface.co/FluidInference/speaker-diarization-coreml) |
+| FluidAudio Core ML runtime | [Repository and Apache 2.0 license](https://github.com/FluidInference/FluidAudio) |
+| NeMo-Speech.cpp | [Repository and license](https://github.com/NVIDIA/NeMo-Speech.cpp) |
+| mlx-audio | [Repository and license](https://github.com/Blaizzy/mlx-audio) |
+| mlx-whisper | [Repository and license](https://github.com/ml-explore/mlx-examples/tree/main/whisper) |
+| Qwen3-ASR | [Original model, Apache 2.0](https://huggingface.co/Qwen/Qwen3-ASR-1.7B), [MLX conversion](https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-bf16) |
+| Qwen3 ForcedAligner | [Original model](https://huggingface.co/Qwen/Qwen3-ForcedAligner-0.6B), [MLX conversion](https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit) |
+| Whisper large-v3 | [Original model](https://huggingface.co/openai/whisper-large-v3), [MLX conversion](https://huggingface.co/mlx-community/whisper-large-v3-mlx) |
+| Parakeet Ultra Core ML | [Weights and attribution](https://huggingface.co/FluidInference/parakeet-ultra-coreml) |
+| Nemotron-3 Diarization | [Model card and OpenMDW 1.1](https://huggingface.co/nvidia/Nemotron-3-Diarization) |
+| Community-1 | [Original pipeline, CC BY 4.0](https://huggingface.co/pyannote/speaker-diarization-community-1), [Core ML conversion and components](https://huggingface.co/FluidInference/speaker-diarization-coreml) |
+| FLEURS evaluation data | [Google FLEURS dataset, CC BY 4.0](https://huggingface.co/datasets/google/fleurs) |
 
-I link ai modelli originali non sostituiscono le condizioni delle conversioni o dei singoli componenti. Per ridistribuire un runtime completo occorre conservare anche licenze e attribuzioni degli artefatti inclusi. Le versioni di setup sono in `scripts/setup_runtime.py`; l'identità degli embedding include gli hash dei file Core ML effettivamente caricati.
+Original-model links do not replace the terms of conversions or their components. Distributing a complete runtime also requires preserving the licenses and attribution of included artifacts. Setup revisions are listed in `scripts/setup_runtime.py`; embedding identities include hashes of the Core ML files actually loaded. FLEURS audio and references are downloaded locally for explicit evaluation and are not bundled with this project.

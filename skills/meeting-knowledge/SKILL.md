@@ -1,6 +1,6 @@
 ---
 name: meeting-knowledge
-description: "Gestisci la memoria locale della pipeline meet: glossari per progetto e lingua, campioni vocali confermati e politiche di riconoscimento. Usa per insegnare nomi tecnici o interlocutori ricorrenti alla pipeline."
+description: "Manage local meet knowledge: project and language glossaries, confirmed voice samples and recognition policies. Use to teach technical terms or recurring speakers to the pipeline."
 ---
 
 # Meeting Knowledge

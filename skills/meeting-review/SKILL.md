@@ -1,6 +1,6 @@
 ---
 name: meeting-review
-description: "Rivedi i dubbi di un job meet già elaborato: confronta letture, conferma speaker e applica correzioni con allineamento audio. Usa quando esiste un job o un rapporto di revisione della pipeline locale."
+description: "Review issues in an existing meet job: compare readings, confirm speakers and apply corrections with audio alignment. Use for a processed local pipeline job or review report."
 ---
 
 # Meeting Review

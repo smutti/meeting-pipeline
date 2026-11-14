@@ -1,71 +1,71 @@
-# Prima versione e pipeline locale: osservazioni del 14 novembre 2026
+# Initial workflow comparison — November 14, 2026
 
-**Esito:** è stato superato il limite architetturale di quattro speaker ed è operativo un workflow locale con più letture e audit. Non è ancora misurato un miglioramento di WER, DER o tempo umano di revisione. Il testo selezionato dal workflow coincide ancora con Parakeet; nessuna correzione è stata approvata automaticamente.
+**Finding:** the architectural limit of four speakers has been exceeded, and a local workflow with independent readings and an audit trail is operational. This private-meeting experiment does not yet measure an improvement in WER, DER or human review time. Its selected text still matches Parakeet; no replacements have been approved automatically. The subsequent [public-corpus ASR test](AUTOMATIC_EVALUATION.md) is a separate experiment.
 
-Qui **V1** indica il precedente workflow basato su Vibe/Whisper e Sortformer a quattro canali; **V2** indica il motore locale di questo repository. Non sono due tag Git: il repository nasce con V2. Il vecchio adattatore controllava una matrice con quattro colonne e iterava su quattro canali. I nomi nelle note archiviate erano stati assegnati manualmente e potevano superare il numero di canali del modello.
+Here **V1** means the previous Vibe/Whisper workflow with four-channel Sortformer; **V2** means this repository's local engine. These are architectures, not Git tags: the repository starts with V2. The old adapter required a matrix with four columns and iterated over four channels. Names in archived notes were assigned manually and could exceed the model's channel count.
 
-## Corpus e configurazione
+## Corpus and configuration
 
-Due registrazioni private: IT-A, italiano, 1.419,987 s (~23:40), sette partecipanti che avrebbero parlato secondo l'utente; EN-B, inglese prevalente, 3.411,828 s (~56:52), quattro interlocutori dichiarati, stanza grande e audio riverberante. Il conteggio dell'utente non sostituisce l'annotazione dei turni. Le note archiviate conservano alcune modifiche umane; non sono ground truth. Nel file inglese terminano a 3.407,05 s, prima della fine del WAV.
+Two private recordings: IT-A, Italian, 1,419.987 s (~23:40), seven participants reportedly likely to have spoken; EN-B, predominantly English, 3,411.828 s (~56:52), four reported speakers, recorded in a large reverberant room. User estimates do not replace turn annotations. Archived notes contain some human edits and are not ground truth. The archived English transcript ends at 3,407.05 s, before the normalized WAV ends.
 
-Tutti i nuovi motori ricevono lo stesso WAV mono 16 kHz PCM16, senza denoise o correzione del volume. Il decoder ha segnalato pacchetti MP3 non validi sul file inglese, con durata decodificata inferiore di ~0,32 s al contenitore. Gli originali restano invariati. Tre campioni di 90 s per audio sono stati scelti per posizione temporale prima di vedere le risposte: 9 minuti totali, senza riferimento umano completato.
+All new engines receive the same mono 16 kHz PCM16 WAV, without denoising or gain adjustment. The decoder reported invalid MP3 packets in the English file; decoded duration is about 0.32 s shorter than the container duration. Originals remain unchanged. Three 90-second excerpts per recording were selected by temporal position before reading outputs: nine minutes total, without completed human references.
 
-Hardware: Apple M5 Pro, 24 GB. MLX 0.32.4, mlx-audio 0.6.5, mlx-whisper 0.4.3. Revisioni:
+Hardware: Apple M5 Pro, 24 GB. MLX 0.32.4, mlx-audio 0.6.5, mlx-whisper 0.4.3. Revisions:
 
-| Componente | Revisione |
+| Component | Revision |
 |---|---|
 | Whisper large-v3 MLX | `49e6aa286ad60c14352c404340ded53710378a11` |
 | Qwen3-ASR 1.7B BF16 MLX | `e1f6c266914abc5a46e8756e02580f834a6cf8a7` |
 | Parakeet Ultra Core ML | `95eaa59a39d4394f047a4dc5cce480388a60d1b6` |
 | FluidAudio | `16780f04d2ece24f67d0fc00efccd0296491c1a8` |
 | Nemotron-3 Diarization | `52a432672732425e4c19765b9fec9b5810e6f4ba` |
-| NeMo-Speech.cpp | binario 0.3.0, converter `e790e463b2913cff9f989a3df224c587f14b4c5c` |
+| NeMo-Speech.cpp | binary 0.3.0, converter `e790e463b2913cff9f989a3df224c587f14b4c5c` |
 | Community-1 Core ML | `7eab74f3463c736418d0eb10296261ae581146c9` |
 
-Parakeet usa encoder INT8 per canale; Whisper FP16, Qwen BF16; Nemotron GGUF contiene 358 tensori F32 e una convoluzione F16. Queste sono implementazioni e precisioni specifiche, non un confronto delle sole architetture teoriche. Qwen usa chunk da 90 s, temperatura 0; Whisper usa il normale fallback di decodifica. Una prova preliminare greedy è conservata separatamente e non entra nella tabella principale.
+Parakeet uses a per-channel INT8 encoder; Whisper uses FP16 and Qwen BF16. The Nemotron GGUF contains 358 F32 tensors and one F16 convolution. These are specific implementations and precisions, not a comparison of theoretical architectures alone. Qwen uses 90-second chunks and temperature 0; Whisper uses normal decoding fallback. An earlier greedy diagnostic run is preserved separately and excluded from the main table.
 
-## Inferenza ASR sul file intero
+## Full-recording ASR inference
 
-| Motore | IT-A, secondi | EN-B, secondi |
+| Engine | IT-A, seconds | EN-B, seconds |
 |---|---:|---:|
-| Whisper large-v3 / MLX | 104,49 | 306,35 |
-| Qwen3-ASR 1.7B / MLX | 73,94 | 121,27 |
-| Parakeet Ultra / Core ML | 8,29 | 18,70 |
+| Whisper large-v3 / MLX | 104.49 | 306.35 |
+| Qwen3-ASR 1.7B / MLX | 73.94 | 121.27 |
+| Parakeet Ultra / Core ML | 8.29 | 18.70 |
 
-Una esecuzione per configurazione, modelli già scaricati. Il caricamento iniziale MLX è escluso; l'avvio del comando Core ML è incluso. Sono misure indicative, non medie ripetute né confronto dei tempi della vecchia app Vibe. I tempi non dicono quale testo sia più fedele.
+One execution per configuration, with models already downloaded. Initial MLX loading is excluded; Core ML command startup is included. These are indicative measurements, not repeated averages or timing comparisons with the old Vibe app. Timing does not establish transcript accuracy.
 
-Nel file inglese Whisper ripete una stessa breve frase 18 volte nell'intervallo circa 38:30–38:54; gli altri due output hanno testo diverso. È un'anomalia osservata negli output, da verificare sull'audio. Non viene conteggiata come errore certificato in assenza del riferimento umano.
+In the English recording, Whisper repeats one short phrase 18 times around 38:30–38:54; the other two outputs contain different text. This is an observed textual anomaly requiring audio verification, not a certified error count without a verified reference.
 
-## Diarizzazione
+## Diarization
 
-| Configurazione | IT-A | EN-B | Interpretazione |
+| Configuration | IT-A | EN-B | Interpretation |
 |---|---:|---:|---|
-| V1 Sortformer 4 canali | capacità massima 4 | capacità massima 4 | Limite dell'adattatore precedente, non misura su questi file |
-| Nemotron-3 automatico | 7 | 4 | Conteggio rilevato |
-| Community-1 Core ML automatico | 6 | 3 | Conteggio rilevato |
-| Community-1 Core ML con numero fornito | 7 | 4 | Conteggio imposto come vincolo |
+| V1 four-channel Sortformer | maximum capacity 4 | maximum capacity 4 | Old adapter limit, not a measurement on these files |
+| Automatic Nemotron-3 | 7 | 4 | Detected count |
+| Automatic Community-1 Core ML | 6 | 3 | Detected count |
+| Community-1 Core ML with known count | 7 | 4 | Count supplied as a constraint |
 
-Nemotron supporta al massimo [otto speaker](https://huggingface.co/nvidia/Nemotron-3-Diarization). Il workflow sceglie Community-1 se l'utente dichiara più di otto voci. Non è una promessa di diarizzazione illimitata o corretta.
+Nemotron supports at most [eight speakers](https://huggingface.co/nvidia/Nemotron-3-Diarization). The workflow selects Community-1 when more than eight speakers are explicitly supplied. This does not promise unlimited or correct diarization.
 
-Il settimo cluster italiano di Nemotron contiene solo 3,868 s; il più breve inglese solo 1,696 s. Il conteggio corrisponde alle attese, ma potrebbe includere frammentazione della stessa voce. Senza turni annotati e mappatura delle etichette non possiamo calcolare DER. Community-1 con numero noto non è una conferma indipendente del numero reale.
+Nemotron's seventh Italian cluster contains only 3.868 s; its shortest English cluster contains 1.696 s. Counts match expectations but may include fragmentation of one voice. DER requires annotated turns and label mapping. Community-1 with a supplied count is not independent confirmation of the real count.
 
-## Workflow completo V2
+## Complete V2 workflow
 
-Le seguenti prove usano la ricetta `quality` del codice a commit `cd1ded5`, con il runtime operativo fuori dalle cartelle protette di macOS. Il benchmark ASR sopra è separato. La versione del package è 0.1.0; il commit viene annotato qui perché il manifest iniziale registrava soltanto la versione del package.
+These runs use the `quality` recipe at commit `cd1ded5`, with the operational runtime outside protected macOS folders. The ASR benchmark above is separate. Package version was 0.1.0; the commit is recorded here because the initial manifest stored only the package version.
 
-| Misura | IT-A | EN-B |
+| Measurement | IT-A | EN-B |
 |---|---:|---:|
-| Tempo end-to-end osservato | 138,97 s | 179,70 s |
-| Segnalazioni aperte | 67 | 151 |
-| Letture Whisper mirate | 6 | 2 |
-| Audio coperto dall'unione degli intervalli segnalati | 97,2% | 97,3% |
-| Sostituzioni del testo approvate | 0 | 0 |
-| Stato finale | `needs_review` | `needs_review` |
+| Observed end-to-end time | 138.97 s | 179.70 s |
+| Open issues | 67 | 151 |
+| Targeted Whisper readings | 6 | 2 |
+| Audio covered by the union of flagged intervals | 97.2% | 97.3% |
+| Approved text replacements | 0 | 0 |
+| Final state | `needs_review` | `needs_review` |
 
-Il tempo end-to-end è la differenza tra creazione e ultimo aggiornamento del job, senza revisione umana. I controlli includono bassi punteggi del decoder, allineamento degli speaker, disaccordi, speaker molto brevi e identità sconosciute. Le finestre di controllo sono larghe: la copertura del 97% **non equivale al 97% di parole sbagliate**, né al tempo effettivo richiesto a una persona. Mostra però che non è ancora dimostrata una riduzione sostanziale dell'ascolto manuale.
+End-to-end time is job creation to last update, excluding human review. Checks include low decoder scores, speaker alignment, disagreements, very short clusters and unknown identities. Check windows are broad: 97% coverage **does not mean 97% incorrect words**, nor does it measure actual review time. It does show that a substantial reduction in manual listening is not yet established.
 
-Il testo selezionato è identico, confrontando le parole separate da spazi, al Parakeet del benchmark su entrambi i file. Qwen e Whisper aggiungono alternative e segnalazioni; questa versione non sceglie automaticamente il testo migliore. I profili vocali non sono ancora iscritti; il glossario contiene soltanto un nome di progetto per registrazione. Non è stato misurato un vantaggio né del riconoscimento dei nomi né del glossario.
+Selected text matches benchmark Parakeet on both recordings when compared as whitespace-separated words. Qwen and Whisper add alternatives and flags; this version does not automatically select the most accurate text. No voice profiles are enrolled. The glossary contains only one project name per recording. Neither name recognition nor glossary benefits have been measured in this experiment.
 
-Una prova precedente sul file italiano aveva 46 segnalazioni: mancava il successivo controllo dell'allineamento degli speaker. È conservata nel confronto locale, ma non viene usata per stimare un miglioramento o una regressione rispetto alle 67 segnalazioni attuali.
+An earlier Italian run had 46 issues because the later speaker-alignment check was absent. It remains in the local comparison but is not used to infer improvement or regression from the current 67 issues.
 
-I [dati aggregati](benchmark-2026-11-14.json) sono pubblici; registrazioni, testi, nomi, percorsi e profili restano privati. I risultati del corpus privato sono osservazioni riportate dall'autore, non verificabili indipendentemente senza gli audio. Il [protocollo](EVALUATION.md) e il codice consentono di ripetere il metodo su un corpus proprio. Per dimostrare il “prima/dopo” di accuratezza servono ora riferimenti umani sugli stessi intervalli, turni speaker annotati e misure del lavoro di revisione.
+[Aggregate data](benchmark-2026-11-14.json) is public; recordings, transcripts, names, paths and profiles remain private. These are author-reported observations on a private corpus, not independently reproducible results without the audio. The [protocol](EVALUATION.md) and code support repetition on another corpus. Establishing meeting accuracy gains requires verified references on identical intervals, annotated speaker turns and review-time measurements.

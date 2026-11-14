@@ -27,7 +27,7 @@ def render(home, job_id):
         "",
         f"# {manifest['source_name']}",
         "",
-        "Trascrizione automatica. I dubbi aperti sono riportati nel rapporto di revisione.",
+        "Automatic transcript. Open issues are listed in the review report.",
         "",
     ]
     group = []
@@ -38,7 +38,7 @@ def render(home, job_id):
         speakers = speaker_for(w, diar["segments"])
         current = (
             " / ".join(names.get(s, "Speaker " + s) for s in speakers)
-            or "Speaker incerto"
+            or "Uncertain speaker"
         )
         if len(speakers) > 1:
             current += " (sovrapposizione/cambio)"
@@ -55,31 +55,31 @@ def render(home, job_id):
     if group:
         lines += [f"**[{stamp(start)}] {label}:** {' '.join(group)}", ""]
     open_issues = [i for i in issues if i["status"] == "open"]
-    lines += [f"Dubbi aperti: {len(open_issues)}. File di revisione: review.html."]
+    lines += [f"Open issues: {len(open_issues)}. Review file: review.html."]
     (directory / "transcript.md").write_text("\n".join(lines))
     parts = [
-        """<!doctype html><html lang="it"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Revisione riunione</title><style>body{max-width:1100px;margin:35px auto;padding:0 20px;font:16px/1.6 system-ui;background:#f4f6f2;color:#203932}article{background:white;padding:20px;margin:15px 0;border:1px solid #ccd7cf;border-radius:10px}audio{width:100%}button{padding:8px 14px;cursor:pointer}pre{white-space:pre-wrap}small{color:#55685e}.alternatives{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}code{overflow-wrap:anywhere}</style>""",
-        f'<h1>{escape(manifest["source_name"])}</h1><p>{escape(status)} · {len(open_issues)} dubbi aperti. I punteggi dei modelli non sono percentuali di accuratezza.</p><audio id="player" controls preload="none" src="audio.wav"></audio><p><a href="transcript.md">Trascrizione</a> · <a href="issues.json">Dubbi JSON</a></p>',
+        """<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meeting review</title><style>body{max-width:1100px;margin:35px auto;padding:0 20px;font:16px/1.6 system-ui;background:#f4f6f2;color:#203932}article{background:white;padding:20px;margin:15px 0;border:1px solid #ccd7cf;border-radius:10px}audio{width:100%}button{padding:8px 14px;cursor:pointer}pre{white-space:pre-wrap}small{color:#55685e}.alternatives{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}code{overflow-wrap:anywhere}</style>""",
+        f'<h1>{escape(manifest["source_name"])}</h1><p>{escape(status)} · {len(open_issues)} open issues. Model scores are not accuracy percentages.</p><audio id="player" controls preload="none" src="audio.wav"></audio><p><a href="transcript.md">Transcript</a> · <a href="issues.json">Issues JSON</a></p>',
     ]
     for item in open_issues:
         parts.append(
-            f'<article><small>{escape(item["id"])} · {escape(item["kind"])}</small><h2>{stamp(item["start"])}–{stamp(item["end"])}</h2><p>{escape(item["reason"])}</p><button data-start="{max(0, item["start"] - 2)}" data-end="{item["end"] + 2}">Ascolta</button><div class="alternatives">'
+            f'<article><small>{escape(item["id"])} · {escape(item["kind"])}</small><h2>{stamp(item["start"])}–{stamp(item["end"])}</h2><p>{escape(item["reason"])}</p><button data-start="{max(0, item["start"] - 2)}" data-end="{item["end"] + 2}">Listen</button><div class="alternatives">'
         )
         for key, label in [("primary", "Parakeet"), ("secondary", "Qwen")]:
             if item.get(key):
                 parts.append(f"<div><h3>{label}</h3><p>{escape(item[key])}</p></div>")
         if item.get("third_reading"):
             parts.append(
-                f"<div><h3>Whisper, con contesto</h3><p>{escape(item['third_reading']['text'])}</p></div>"
+                f"<div><h3>Whisper, with context</h3><p>{escape(item['third_reading']['text'])}</p></div>"
             )
         if item.get("candidates"):
             parts.append(
-                "<div><h3>Candidati vocali da confermare</h3><p>"
+                "<div><h3>Voice candidates to confirm</h3><p>"
                 + escape(", ".join(x["name"] for x in item["candidates"]))
                 + "</p></div>"
             )
         parts.append(
-            "</div><p>Usa la skill <code>$meeting-review</code> indicando questo dubbio, oppure il comando:</p><pre>"
+            "</div><p>Use <code>$meeting-review</code> with this issue ID, or run:</p><pre>"
             + escape(f"meet review resolve {job_id} {item['id']} --action keep")
             + "</pre></article>"
         )

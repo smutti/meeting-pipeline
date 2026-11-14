@@ -2,6 +2,8 @@
 
 Pipeline locale per riunioni in italiano e inglese, con trascrizioni indipendenti, diarizzazione, revisione mirata, glossari per progetto e profili vocali. Funziona da CLI, come servizio sul Mac e tramite tre skill Codex.
 
+Codice open source con [licenza MIT](LICENSE). Prototipo operativo su Apple Silicon: qualità e installazione su altri Mac richiedono ulteriori verifiche. I pesi dei modelli hanno [licenze separate](docs/THIRD_PARTY.md).
+
 ## Organizzazione
 
 | Componente | Responsabilità |
@@ -21,6 +23,8 @@ Le skill sono interfacce al motore. La coda lavora anche senza Codex aperto. Un 
 Python 3.12, Apple Silicon, `uv`, `ffmpeg`, git e strumenti Swift/Xcode per il runtime nativo.
 
 ```sh
+git clone https://github.com/smutti/meeting-pipeline.git
+cd meeting-pipeline
 uv venv --python 3.12 .venv
 uv pip install --python .venv/bin/python -e .
 ```
@@ -113,3 +117,9 @@ launchctl bootout gui/$(id -u) "$HOME/Library/LaunchAgents/local.meeting-pipelin
 Configurazione e SQLite sono sotto `MEETING_PIPELINE_HOME` (default `~/.local/share/meeting-pipeline`). Il worker acquisisce un lock, conserva checkpoint e ritenta i file falliti con attesa crescente. I file completati non vengono rielaborati ad ogni scansione. Modificare metadati/profili/ricetta e richiamare `process` crea una nuova esecuzione tracciata.
 
 Vedi [architettura](docs/ARCHITECTURE.md) e [stato e prossimi passi](docs/ROADMAP.md). La prima versione non promette trascrizioni perfette né una banca vocale già calibrata. GitHub Actions verifica il software; gli audio e i modelli sono eseguiti sul Mac.
+
+## Confronti e contributi
+
+Il [confronto iniziale](docs/BENCHMARK.md) distingue le trascrizioni archiviate, tre motori ASR e il nuovo workflow. Riporta tempi e limiti osservati, senza presentare il disaccordo tra modelli come errore misurato. Il [protocollo di valutazione](docs/EVALUATION.md) e lo script `scripts/compare_transcripts.py` permettono di creare un confronto locale e calcolare WER su estratti con una trascrizione umana verificata.
+
+Per contribuire: [CONTRIBUTING.md](CONTRIBUTING.md). Audio, trascrizioni, profili vocali, glossari personali e rapporti locali non vanno allegati a issue o pull request.

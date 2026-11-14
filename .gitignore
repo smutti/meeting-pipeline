@@ -19,3 +19,8 @@ inbox/
 *.flac
 *.sqlite*
 *.db
+evaluations/
+jobs/
+outbox/
+knowledge.json
+config.json

@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-14",
+  "hardware": "Apple M5 Pro, 24 GB",
+  "corpus": "Two private recordings. No audio or transcripts are distributed.",
+  "reference": null,
+  "accuracy_metrics": null,
+  "normalization": "mono, 16 kHz, PCM16; no enhancement",
+  "asr_measurement": "One run per model/recording. MLX initial load excluded, Core ML CLI startup included. Cached downloads. Not an old Vibe timing benchmark.",
+  "recordings": [
+    {
+      "id": "IT-A",
+      "duration_seconds": 1419.9869375,
+      "expected_speakers": 7,
+      "speaker_expectation": "User estimate, not manually annotated turns",
+      "asr": [
+        {
+          "engine": "whisper",
+          "wall_seconds": 104.49342925000019,
+          "words_whitespace_split": 3027
+        },
+        {
+          "engine": "qwen",
+          "wall_seconds": 73.94196949999969,
+          "words_whitespace_split": 3071
+        },
+        {
+          "engine": "parakeet",
+          "wall_seconds": 8.290511791999961,
+          "words_whitespace_split": 3085
+        }
+      ],
+      "diarization": [
+        {
+          "engine": "nemotron3",
+          "speaker_count": 7,
+          "count_provided": false,
+          "minimum_speaker_seconds": 3.868000000000052
+        },
+        {
+          "engine": "community1",
+          "speaker_count": 6,
+          "count_provided": false,
+          "minimum_speaker_seconds": 51.05235600000024
+        },
+        {
+          "engine": "community1-known",
+          "speaker_count": 7,
+          "count_provided": true,
+          "minimum_speaker_seconds": 51.85035600000024
+        }
+      ],
+      "workflow": {
+        "wall_seconds": 138.97288179397583,
+        "status": "needs_review",
+        "issue_counts": {
+          "text": 32,
+          "speaker_alignment": 21,
+          "speaker": 1,
+          "disagreement": 6,
+          "identity": 7
+        },
+        "issues_total": 67,
+        "flagged_seconds_union": 1379.9869375,
+        "flagged_fraction": 0.9718307267879357,
+        "selected_text_equals_parakeet": true,
+        "reviewed_edits": 0
+      }
+    },
+    {
+      "id": "EN-B",
+      "duration_seconds": 3411.828,
+      "expected_speakers": 4,
+      "speaker_expectation": "User estimate, not manually annotated turns",
+      "asr": [
+        {
+          "engine": "whisper",
+          "wall_seconds": 306.34578791700005,
+          "words_whitespace_split": 5883
+        },
+        {
+          "engine": "qwen",
+          "wall_seconds": 121.27469620800002,
+          "words_whitespace_split": 5952
+        },
+        {
+          "engine": "parakeet",
+          "wall_seconds": 18.697563167001135,
+          "words_whitespace_split": 6478
+        }
+      ],
+      "diarization": [
+        {
+          "engine": "nemotron3",
+          "speaker_count": 4,
+          "count_provided": false,
+          "minimum_speaker_seconds": 1.695999999999998
+        },
+        {
+          "engine": "community1",
+          "speaker_count": 3,
+          "count_provided": false,
+          "minimum_speaker_seconds": 642.0881500000011
+        },
+        {
+          "engine": "community1-known",
+          "speaker_count": 4,
+          "count_provided": true,
+          "minimum_speaker_seconds": 393.3782599999979
+        }
+      ],
+      "workflow": {
+        "wall_seconds": 179.69715285301208,
+        "status": "needs_review",
+        "issue_counts": {
+          "text": 83,
+          "speaker_alignment": 61,
+          "speaker": 1,
+          "disagreement": 2,
+          "identity": 4
+        },
+        "issues_total": 151,
+        "flagged_seconds_union": 3320,
+        "flagged_fraction": 0.9730853958640353,
+        "selected_text_equals_parakeet": true,
+        "reviewed_edits": 0
+      }
+    }
+  ]
+}

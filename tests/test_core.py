@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-from meeting_pipeline.common import save, locked
+from meeting_pipeline.common import save, locked, protected_runtime_path
 from meeting_pipeline.knowledge import add_term, load, terms_for, enroll, match
 from meeting_pipeline.quality import speaker_for, clean_spans, compare, tokens
 from meeting_pipeline.state import State
@@ -17,6 +17,15 @@ class LocalTest(unittest.TestCase):
 
     def tearDown(self):
         self.tmp.cleanup()
+
+    def test_service_migrates_venv_symlink_even_when_target_is_unprotected(self):
+        shared = self.home / "shared-python"
+        shared.write_text("interpreter fixture")
+        interpreter = self.home / "Documents/project/.venv/bin/python"
+        interpreter.parent.mkdir(parents=True)
+        interpreter.symlink_to(shared)
+        self.assertTrue(protected_runtime_path(interpreter, self.home))
+        self.assertFalse(protected_runtime_path(shared, self.home))
 
     def test_glossary_scopes_and_confirmed_overrides(self):
         add_term(self.home, "Product X", ["product ex"], "*", "*", "global")

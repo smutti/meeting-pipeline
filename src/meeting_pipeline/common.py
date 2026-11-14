@@ -89,3 +89,14 @@ def load_config(home):
     if not path.exists():
         raise ValueError("Run 'meet init --runtime-root PATH' first")
     return read(path)
+
+
+def protected_runtime_path(path, user_home=None):
+    """Check lexical paths too: Python reads pyvenv.cfg beside a venv symlink."""
+    base = Path(user_home) if user_home else Path.home()
+    paths = [Path(path).expanduser().absolute(), Path(path).resolve()]
+    return any(
+        candidate.is_relative_to(base / folder)
+        for candidate in paths
+        for folder in ["Documents", "Desktop", "Downloads"]
+    )

@@ -11,6 +11,8 @@ import shutil
 import subprocess
 import sys
 
+from meeting_pipeline.common import protected_runtime_path
+
 root = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
 p.add_argument("--service", action="store_true")
@@ -41,11 +43,7 @@ def link(target, destination, replace_targets=()):
 
 
 def protected(path):
-    path = Path(path).resolve()
-    return any(
-        path.is_relative_to(Path.home() / folder)
-        for folder in ["Documents", "Desktop", "Downloads"]
-    )
+    return protected_runtime_path(path)
 
 
 def clone(source, target):

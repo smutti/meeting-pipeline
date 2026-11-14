@@ -48,6 +48,8 @@ For a new installation, `scripts/setup_runtime.py --path /path/to/runtime` downl
 
 Skill links are installed in `~/.codex/skills` or `$CODEX_HOME/skills`; the command is installed in `~/.local/bin/meet`. A new chat may be needed to discover the skills. The installer does not replace unrelated installations.
 
+When retiring a previous Vibe workflow, archive its `vibe` and Vibe-based `obsidian-knowledge-capture` skill folders outside the active skills directory. Use `meeting-process`, `meeting-review` and `meeting-knowledge` for ongoing work. Keep historical recordings, transcripts and benchmark artifacts for comparison; retiring the old entry points does not require deleting those results.
+
 With `--service`, a non-editable package is installed in `~/.local/share/meeting-pipeline/service-env`. Runtimes under Documents/Desktop/Downloads are copied into application data because macOS may deny background services access to protected folders. The development checkout stays in place. After updating the code, rerun the installer with `--service` to update the operational copy. Installation stops if a worker is busy.
 
 ## Daily use

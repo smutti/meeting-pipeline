@@ -1,5 +1,6 @@
 from __future__ import annotations
 from html import escape
+import re
 from .common import read, save, locked
 from .quality import speaker_for
 from .state import State
@@ -15,6 +16,9 @@ def render(home, job_id):
     state = State(home)
     status = state.job(job_id)["status"]
     manifest = read(directory / "manifest.json")
+    title = " ".join(
+        manifest.get("meeting", {}).get("title", manifest["source_name"]).split()
+    )
     issues = read(directory / "issues.json")
     selected = read(directory / "selected.json")
     diar = read(directory / "diarization.json")
@@ -25,7 +29,7 @@ def render(home, job_id):
         f"status: {status}",
         "---",
         "",
-        f"# {manifest['source_name']}",
+        "# " + re.sub(r"([\\`*_{}\[\]<>!#])", r"\\\1", title),
         "",
         "Automatic transcript. Open issues are listed in the review report.",
         "",
@@ -41,7 +45,7 @@ def render(home, job_id):
             or "Uncertain speaker"
         )
         if len(speakers) > 1:
-            current += " (sovrapposizione/cambio)"
+            current += " (overlap/transition)"
         if group and (
             label != current or w["end"] - start > 25 or w["start"] - last > 1.5
         ):
@@ -59,7 +63,7 @@ def render(home, job_id):
     (directory / "transcript.md").write_text("\n".join(lines))
     parts = [
         """<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Meeting review</title><style>body{max-width:1100px;margin:35px auto;padding:0 20px;font:16px/1.6 system-ui;background:#f4f6f2;color:#203932}article{background:white;padding:20px;margin:15px 0;border:1px solid #ccd7cf;border-radius:10px}audio{width:100%}button{padding:8px 14px;cursor:pointer}pre{white-space:pre-wrap}small{color:#55685e}.alternatives{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}code{overflow-wrap:anywhere}</style>""",
-        f'<h1>{escape(manifest["source_name"])}</h1><p>{escape(status)} · {len(open_issues)} open issues. Model scores are not accuracy percentages.</p><audio id="player" controls preload="none" src="audio.wav"></audio><p><a href="transcript.md">Transcript</a> · <a href="issues.json">Issues JSON</a></p>',
+        f'<h1>{escape(title)}</h1><p>{escape(status)} · {len(open_issues)} open issues. Model scores are not accuracy percentages.</p><audio id="player" controls preload="none" src="audio.wav"></audio><p><a href="transcript.md">Transcript</a> · <a href="issues.json">Issues JSON</a></p>',
     ]
     for item in open_issues:
         parts.append(

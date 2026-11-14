@@ -39,7 +39,7 @@ def _scan_once(home, stable_seconds):
         sidecar = path.with_name(path.name + ".json")
         try:
             metadata = read(sidecar) if sidecar.exists() else {}
-            allowed = {"project", "language", "recipe", "speakers"}
+            allowed = {"project", "language", "recipe", "speakers", "meeting"}
             if set(metadata) - allowed:
                 raise ValueError("Unknown metadata keys")
         except (ValueError, json.JSONDecodeError) as error:
@@ -66,6 +66,7 @@ def _scan_once(home, stable_seconds):
                 language=metadata.get("language", "auto"),
                 recipe_name=metadata.get("recipe", "quality"),
                 speakers=metadata.get("speakers"),
+                meeting=metadata.get("meeting"),
             )
             cache[key]["job"] = result["job"]
             results.append(result)
@@ -93,8 +94,15 @@ def export(home, job_id, directory, draft=False):
             "Unresolved review items; use --draft only when a draft export is intended"
         )
     source = home / "jobs" / job_id / "transcript.md"
+    manifest_path = source.parent / "manifest.json"
+    manifest = read(manifest_path) if manifest_path.exists() else {}
+    stem = job_id
+    if manifest.get("meeting"):
+        from .calendar_match import meeting_stem
+
+        stem = meeting_stem(manifest["meeting"], job_id)
     target = Path(directory).expanduser().resolve() / (
-        job_id + ("-draft" if draft else "") + ".md"
+        stem + ("-draft" if draft else "") + ".md"
     )
     target.parent.mkdir(parents=True, exist_ok=True)
     if target.exists() and file_hash(target) != file_hash(source):

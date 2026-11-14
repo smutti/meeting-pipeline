@@ -74,7 +74,7 @@ Place audio in `~/.local/share/meeting-pipeline/inbox/`. The service waits for a
 
 Without metadata, the defaults are project `general`, automatic language and quality mode. A completed automatic pass ends in `needs_review` or `ready`. Only jobs without unresolved issues are exported automatically to the local `outbox`. An Obsidian destination can be configured in `config.json` once its location has been chosen. Reviewed jobs can also be exported explicitly.
 
-Comu/iPhone transfer is a separate source integration. This version automates processing once the file reaches the Mac. It neither enables cloud backup nor assumes automatic transfer is available on the Starter plan.
+For iPhone input, **Send to Meeting Pipeline** packages exported Comu audio and opens AirDrop. A separate Codex automation can read Outlook and queue recordings using the event subject for audio/transcript titles. Only unambiguous time matches proceed automatically. See [iPhone intake and Outlook setup](docs/IPHONE_OUTLOOK.md), including the hourly calendar bridge, device setup and verification limits. Comu Starter still requires the initial export/share action.
 
 ### Review
 

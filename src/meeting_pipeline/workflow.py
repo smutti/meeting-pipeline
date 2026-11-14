@@ -53,6 +53,7 @@ def process(
     recipe_name="quality",
     speakers=None,
     engines=None,
+    meeting=None,
 ):
     if language not in {"it", "en", "auto"}:
         raise ValueError("Language must be it, en or auto")
@@ -85,6 +86,17 @@ def process(
         "runtime": config["runtime"],
         "code_version": __version__,
     }
+    if meeting is not None:
+        from .calendar_match import instant
+
+        if (
+            not isinstance(meeting, dict)
+            or not isinstance(meeting.get("title"), str)
+            or not meeting["title"].strip()
+        ):
+            raise ValueError("Meeting metadata requires a title")
+        instant(meeting["recorded_at"])
+        parameters["meeting"] = meeting
     job_id = digest([content_hash, parameters])[:24]
     state = State(home)
     state.register(job_id, source)
@@ -119,6 +131,8 @@ def process(
                 "parameters": parameters,
                 "created": time.time(),
             }
+            if meeting is not None:
+                manifest["meeting"] = meeting
             save(directory / "manifest.json", manifest)
             audio = state.step(
                 job_id,

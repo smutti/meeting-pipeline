@@ -142,6 +142,29 @@ def parser():
     cmd = sub.add_parser("init")
     cmd.add_argument("--runtime-root", required=True)
     sub.add_parser("doctor")
+    intake = sub.add_parser("intake").add_subparsers(dest="action", required=True)
+    cmd = intake.add_parser(
+        "discover", help="Stage marked AirDrop ZIPs without running models"
+    )
+    cmd.add_argument("directory")
+    cmd.add_argument("--timezone", default="Europe/Rome")
+    cmd.add_argument("--stable-seconds", type=float, default=30)
+    cmd = intake.add_parser("set-time")
+    cmd.add_argument("intake_id")
+    cmd.add_argument(
+        "recorded_at", help="Original recording time with an explicit UTC offset"
+    )
+    cmd = intake.add_parser("apply-calendar")
+    cmd.add_argument("intake_id")
+    cmd.add_argument("snapshot")
+    cmd.add_argument(
+        "--event-id", help="Explicit user-confirmed selection for an ambiguous match"
+    )
+    cmd.add_argument(
+        "--without-title",
+        action="store_true",
+        help="Explicitly queue with the original name",
+    )
     cmd = sub.add_parser("process")
     cmd.add_argument("audio")
     cmd.add_argument("--project", default="general")
@@ -213,6 +236,23 @@ def main(argv=None):
             result = init(home, args.runtime_root)
         elif args.command == "doctor":
             result = doctor(home)
+        elif args.command == "intake":
+            from .intake import discover, set_time, apply_calendar
+
+            if args.action == "discover":
+                result = discover(
+                    home, args.directory, args.timezone, args.stable_seconds
+                )
+            elif args.action == "set-time":
+                result = set_time(home, args.intake_id, args.recorded_at)
+            else:
+                result = apply_calendar(
+                    home,
+                    args.intake_id,
+                    args.snapshot,
+                    args.event_id,
+                    args.without_title,
+                )
         elif args.command == "process":
             from .workflow import process
 

@@ -1,11 +1,12 @@
 # Architecture and contracts
 
-One repository, one Python package, three skills. The engine manages state, files and model selection; Codex helps start jobs, review issues and maintain terminology. Processing does not require an open chat.
+One repository, one Python package, three skills. The engine manages state, files and model selection; Codex helps start jobs, review issues and maintain terminology. The default input is a recording supplied in chat, which invokes the CLI directly. Folder monitoring is an optional input adapter. The engine can also run independently through its CLI.
 
 ```mermaid
 flowchart TD
-  A[File on the Mac] --> B[Stable inbox and content hash]
+  A[File supplied in chat] --> B[Explicit CLI invocation and content hash]
   B --> C[SQLite queue and checkpoints]
+  O[Optional folder intake] --> C
   C --> D[Parakeet: words and timestamps]
   C --> E[Nemotron or Community: speaker turns]
   C --> F[Qwen: independent reading and glossary]

@@ -54,6 +54,8 @@ With `--service`, a non-editable package is installed in `~/.local/share/meeting
 
 ## Daily use
 
+Attach or explicitly reference a recording in chat and invoke `meeting-process`. This is the default input mode: it processes that file without checking Downloads or another folder. Folder watchers and recurring import automations are optional, separately enabled integrations. See [chat input](docs/CHAT_INPUT.md).
+
 ```sh
 meet process "/path/to/meeting.mp3" --project ProjectAlpha --language auto --recipe quality
 meet jobs
@@ -66,7 +68,7 @@ The `fast` recipe runs Qwen only on flagged intervals and can miss errors the fi
 
 Results live in `~/.local/share/meeting-pipeline/jobs/JOB/`: Markdown transcript, local HTML review with audio, original candidates, issue reasons, manifest and audit trail. Open `review.html` in your Mac's browser. Private results stay outside the repository.
 
-### Automatic inbox
+### Optional automatic inbox
 
 Place audio in `~/.local/share/meeting-pipeline/inbox/`. The service waits for a stable file and optionally reads a sidecar named `meeting.mp3.json`:
 
@@ -76,7 +78,7 @@ Place audio in `~/.local/share/meeting-pipeline/inbox/`. The service waits for a
 
 Without metadata, the defaults are project `general`, automatic language and quality mode. A completed automatic pass ends in `needs_review` or `ready`. Only jobs without unresolved issues are exported automatically to the local `outbox`. An Obsidian destination can be configured in `config.json` once its location has been chosen. Reviewed jobs can also be exported explicitly.
 
-For iPhone input, **Send to Meeting Pipeline** packages exported Comu audio and opens AirDrop. A separate Codex automation can read Outlook and queue recordings using the event subject for audio/transcript titles. Only unambiguous time matches proceed automatically. See [iPhone intake and Outlook setup](docs/IPHONE_OUTLOOK.md), including the hourly calendar bridge, device setup and verification limits. Comu Starter still requires the initial export/share action.
+For an explicitly enabled folder workflow, **Send to Meeting Pipeline** packages exported Comu audio and opens AirDrop. A separate Codex automation can read Outlook and queue recordings using the event subject for audio/transcript titles. Only unambiguous time matches proceed automatically. See [optional iPhone intake and Outlook setup](docs/IPHONE_OUTLOOK.md), including the calendar bridge, device setup and verification limits. Comu Starter still requires the initial export/share action.
 
 ### Review
 

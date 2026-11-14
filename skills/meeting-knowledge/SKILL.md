@@ -21,6 +21,8 @@ Inspect `meet voice list` before enrollment. For a person whose identity the use
 meet voice enroll "Confirmed person" AUDIO --start SECONDS --end SECONDS --confirmed
 ```
 
+Existing processed meetings can supply enrollment candidates without running ASR again. Use the original audio and stored diarization, prefer isolated 8–12 second intervals, and present playable clips with stable review IDs. Confirmation must bind the name to the exact source hash and interval; speaker IDs are local to a job. Keep candidates private and unregistered until the user confirms identity and clean speech. For detailed candidate handling, see [voice profiles from existing recordings](../../docs/CHAT_INPUT.md#voice-profiles-from-previous-recordings).
+
 Prefer several samples from different recordings/acoustic conditions. Never use a name merely guessed from the transcript. Duplicate intervals are not extra evidence. Enrollment stores a versioned acoustic representation; it does not clone a voice. Names confirmed in a job are not automatically enrollment samples.
 
 Matching returns unknown/suggested until a policy has been validated. `meet voice policy --threshold VALUE --margin VALUE --evidence REPORT --enable` is for a user-requested, evaluated policy change. The evidence report must document labeled held-out tests including unknown speakers; the software records it but cannot attest its quality. Do not create a dummy report to activate recognition. New enrollment disables automatic acceptance until the expanded gallery is re-evaluated.

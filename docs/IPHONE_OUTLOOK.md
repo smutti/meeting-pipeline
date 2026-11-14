@@ -1,5 +1,7 @@
 # iPhone AirDrop and Outlook titles
 
+This is an optional integration. The default workflow now takes files supplied in chat; see [chat input](CHAT_INPUT.md). The previously installed hourly import automation and local inbox LaunchAgent were disabled on 2026-11-14 at the user's request. The instructions below describe how the optional folder integration works, not a currently active schedule. Outlook matching can still be used on demand for a chat-supplied file.
+
 The input integration keeps transcription local and reads Outlook only to name recordings and transcripts. It never creates or modifies calendar events. Outlook on the iPhone does not need to be synced into Apple Calendar.
 
 ## User flow
@@ -30,7 +32,7 @@ References: [Apple share-sheet shortcuts](https://support.apple.com/guide/shortc
 
 The standalone Python worker cannot invoke a signed-in Codex connector. The initial integration uses a recurring **Codex desktop automation** with the connected Outlook Calendar tool. This is separate from the local LaunchAgent: the calendar bridge requires Codex, its connected calendar and the Mac to be available. The local ASR worker remains independent once audio is queued. Calendar queries send timestamps; audio is never uploaded to Outlook or to an ASR API by this integration.
 
-The operational cadence is hourly. It can also run on demand. The hourly cadence applies to intake, not to model speed; the local inbox polls every minute afterward. A future Microsoft Graph adapter can replace this bridge without changing the queue or the matcher. It would require its own legitimate OAuth setup; connector tokens must never be extracted or reused.
+When explicitly enabled, the proposed cadence is hourly. It can also run on demand. That cadence applies to intake, not to model speed; an enabled local inbox polls every minute afterward. A future Microsoft Graph adapter can replace this bridge without changing the queue or the matcher. It would require its own legitimate OAuth setup; connector tokens must never be extracted or reused.
 
 On this Mac the Outlook desktop scripting interface returned zero accounts/events even though the connected Outlook calendar contained meetings. Desktop AppleScript was therefore not selected as the calendar provider.
 

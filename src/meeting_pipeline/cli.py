@@ -171,6 +171,10 @@ def parser():
     cmd.add_argument("--language", choices=["it", "en", "auto"], default="auto")
     cmd.add_argument("--recipe", default="quality")
     cmd.add_argument("--speakers", type=int)
+    cmd.add_argument(
+        "--meeting-metadata",
+        help="JSON title/provenance metadata for this explicitly supplied recording",
+    )
     cmd = sub.add_parser("jobs")
     cmd.add_argument("job", nargs="?")
     cmd = sub.add_parser("watch")
@@ -263,6 +267,7 @@ def main(argv=None):
                 args.language,
                 args.recipe,
                 args.speakers,
+                meeting=read(args.meeting_metadata) if args.meeting_metadata else None,
             )
         elif args.command == "jobs":
             state = State(home)

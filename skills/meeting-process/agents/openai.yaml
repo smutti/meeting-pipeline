@@ -1,0 +1,4 @@
+interface:
+  display_name: "Meeting Process"
+  short_description: "Elabora riunioni con la pipeline locale"
+  default_prompt: "Usa $meeting-process per elaborare questa registrazione."

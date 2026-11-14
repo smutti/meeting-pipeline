@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local-meeting-pipeline"
+version = "0.1.0"
+description = "Local multilingual meeting workflows, review, voice profiles and glossaries"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+meet = "meeting_pipeline.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+meeting_pipeline = ["recipes/*.json"]

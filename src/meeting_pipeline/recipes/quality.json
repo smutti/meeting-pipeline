@@ -1,0 +1,18 @@
+{
+  "name": "quality",
+  "version": 1,
+  "primary_asr": "parakeet",
+  "secondary_asr": "qwen",
+  "secondary_scope": "full",
+  "fallback_asr": "whisper",
+  "max_fallback_clips": 8,
+  "diarizer": "nemotron3",
+  "check_diarization": true,
+  "window_seconds": 40,
+  "context_seconds": 5,
+  "low_confidence": 0.65,
+  "disagreement_ratio": 0.22,
+  "rare_speaker_seconds": 8,
+  "voice_samples_per_speaker": 2,
+  "auto_replace_text": false
+}

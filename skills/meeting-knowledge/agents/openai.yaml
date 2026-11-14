@@ -1,0 +1,4 @@
+interface:
+  display_name: "Meeting Knowledge"
+  short_description: "Gestisci glossari e profili vocali locali"
+  default_prompt: "Usa $meeting-knowledge per aggiornare glossario e profili vocali."

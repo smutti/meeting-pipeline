@@ -1,6 +1,8 @@
 # Code, runtimes and models
 
-The repository's MIT license covers the original code and documentation distributed here. It does not change licenses for dependencies, weights, conversions or user data. Model weights and recordings are not distributed in the repository; setup downloads runtimes separately.
+The repository's Apache License 2.0 covers the original code and documentation distributed here. It does not change licenses for dependencies, weights, conversions or user data. Model weights and recordings are not distributed in the repository; setup downloads runtimes separately.
+
+Apache 2.0 applies to the current version starting with package 0.1.2. Earlier published snapshots retain the license recorded in their own `LICENSE` files; the Git history is preserved.
 
 Consult the sources for the exact revisions being used:
 

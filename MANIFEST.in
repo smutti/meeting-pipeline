@@ -1,4 +1,4 @@
-include README.md LICENSE CONTRIBUTING.md
+include README.md LICENSE NOTICE CONTRIBUTING.md
 recursive-include docs *.md *.json
 recursive-include scripts *.py
 recursive-include skills *.md *.yaml

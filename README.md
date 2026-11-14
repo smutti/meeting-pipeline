@@ -2,7 +2,7 @@
 
 A local pipeline for Italian and English meetings, with independent transcriptions, diarization, targeted review, project glossaries and voice profiles. Available through a CLI, a macOS background service and three Codex skills.
 
-Open-source code under the [MIT license](LICENSE). An operational Apple Silicon prototype: recognition quality and installation on other Macs still need further validation. Model weights have [separate licenses](docs/THIRD_PARTY.md). All project documentation is maintained in English; transcripts stay in the language spoken.
+Open-source code under the [Apache License 2.0](LICENSE). An operational Apple Silicon prototype: recognition quality and installation on other Macs still need further validation. Model weights have [separate licenses](docs/THIRD_PARTY.md). All project documentation is maintained in English; transcripts stay in the language spoken.
 
 ## Organization
 

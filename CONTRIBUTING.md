@@ -19,4 +19,4 @@ Use synthetic fixtures for unit tests. Do not include meeting recordings, real t
 
 Quality changes must document corpus, versions, parameters, normalization, reference provenance, hardware and timing boundaries. Evaluate the same audio and report regressions. A correct speaker count does not establish correct diarization; agreement between ASR engines does not verify their text.
 
-Pull requests should explain the problem, resulting behavior and validation. Original code is MIT; dependencies and models retain their own licenses. New adapters must document those sources and terms.
+Pull requests should explain the problem, resulting behavior and validation. Original code is licensed under Apache 2.0; dependencies and models retain their own licenses. New adapters must document those sources and terms.
